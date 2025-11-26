@@ -63,7 +63,7 @@ static NSString * const kFFFastImageDefaultErrorMessage = @"Load failed";
 
 - (void)onProgressEvent:(NSInteger)receivedSize expectedSize:(NSInteger)expectedSize {
     #ifdef RCT_NEW_ARCH_ENABLED
-        if (_eventEmitter != nullptr) {
+    if (_eventEmitter != nullptr && self.hasCompleted != YES) {
             std::dynamic_pointer_cast<const facebook::react::FastImageViewEventEmitter>(_eventEmitter)
             ->onFastImageProgress(facebook::react::FastImageViewEventEmitter::OnFastImageProgress{.loaded = static_cast<int>(receivedSize), .total = static_cast<int>(expectedSize)});
         }
@@ -325,7 +325,7 @@ static NSString * const kFFFastImageDefaultErrorMessage = @"Load failed";
                     NSError* _Nullable error,
                     SDImageCacheType cacheType,
                     NSURL* _Nullable imageURL) {
-                if (error) {
+                if (error && !weakSelf.hasCompleted) {
                     weakSelf.hasErrored = YES;
                     [weakSelf onErrorEvent:error];
 
